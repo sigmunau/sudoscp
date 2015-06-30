@@ -1,4 +1,5 @@
 #! /bin/bash
+res=0
 from=$1
 to=$2
 shift
@@ -13,4 +14,20 @@ fi
 
 read -s -p "Enter Password: " sudopassword
 echo ""
-(echo "$sudopassword";echo "$sudopassword"|ssh $from sudo -S tar c -P -C / $files)|ssh $to sudo -S tar x -v -P -C /
+temp1=$(mktemp)
+temp2=$(mktemp)
+(echo "$sudopassword";echo "$sudopassword"|ssh $from sudo -S tar c -P -C / $files 2>$temp1)|ssh $to sudo -S tar x -v -P -C / 2>$temp2
+sourceres=${PIPESTATUS[0]}
+if [ $? -ne 0 -o $sourceres -ne 0 ]
+then
+    echo "Failure!" >&2
+    echo "$from output:" >&2
+    cat $temp1 >&2
+    echo "" >&2
+    echo "$to output:" >&2
+    cat $temp2 >&2
+    res=1
+fi
+
+rm $temp1 $temp2
+exit $res
