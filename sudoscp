@@ -1,0 +1,15 @@
+#! /bin/bash
+from=$1
+to=$2
+shift
+shift
+files="$@"
+if test -z "$from" -o -z "$to" -o -z "$files"
+then
+	echo "Usage: $0 <from> <to> <file> (file)*"
+	echo "example: $0 server1 server2 /usr/bin/myapp"
+	exit 1
+fi
+
+read -s -p "Enter Password: " sudopassword
+(echo "$sudopassword";echo "$sudopassword"|ssh $from sudo -S tar c -C / $files)|ssh $to sudo -S tar x -v -C /
