@@ -1,0 +1,27 @@
+#compdef sudoscp
+
+. /usr/share/zsh/functions/Completion/Unix/_ssh
+
+_sudoscp() { 
+    local curcontext="$curcontext" state line
+    typeset -A opt_args
+ 
+    _arguments \
+        '1: :->host'\
+        '2: :->host'\
+        '*: :->file'
+ 
+    case $state in
+    host)
+        _ssh_hosts
+    ;;
+    file)
+        echo $words[2] >> /tmp/debug
+        _remote_files -h $words[2] -- ssh 
+    ;;
+    *)
+        _files 
+    esac
+}
+ 
+_sudoscp "$@"
