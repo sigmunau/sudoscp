@@ -12,4 +12,5 @@ then
 fi
 
 read -s -p "Enter Password: " sudopassword
-(echo "$sudopassword";echo "$sudopassword"|ssh $from sudo -S tar c -C / $files)|ssh $to sudo -S tar x -v -C /
+echo ""
+(echo "$sudopassword";echo "$sudopassword"|ssh $from sudo -S tar c -P -C / $files)|ssh $to sudo -S tar x -v -P -C /
